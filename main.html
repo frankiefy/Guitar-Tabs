@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guitar Tabs</title>
+</head>
+<body>
+    <form>
+        <label>How many beats per bar?</label>
+        <input type="text" id="beat-per-bar" onkeypress="handleUpdateBeats(event)"><br>
+        <label>How much space between each beat?</label>
+        <input type="text" id="blanks-per-beat" onkeypress="handleUpdateBlanks(event)"><br>
+        <input value="Update (and reset)" type="button" onClick="updateBeats(); updateBlanks();"><input value="Add Bar" type="button" onClick="addBar()" ><br>
+        <label>Click a beat to increase fret (currently resets at 24)</label><br>
+        <label>Click a blank to insert a symbol</label>
+    </form>
+    <table>
+        <tr id="E-string" class="string e">
+            <th>E</th>
+            <td class="string-start" id="E-start"><strong>|</strong></td>
+        </tr>
+        <tr id="A-string" class="string a">
+            <th>A</th>
+            <td class="string-start" id="A-start"><strong>|</strong></td>
+        </tr>
+        <tr id="D-string" class="string d">
+            <th>D</th>
+            <td class="string-start" id="D-start"><strong>|</strong></td>
+        </tr>
+        <tr id="G-string" class="string g">
+            <th>G</th>
+            <td class="string-start" id="G-start"><strong>|</strong></td>
+        </tr>
+        <tr id="B-string" class="string b">
+            <th>B</th>
+            <td class="string-start" id="B-start"><strong>|</strong></td>
+        </tr>
+        <tr id="little-E-string" class="string littlee">
+            <th>e</th>
+            <td class="string-start" id="little-e-start"><strong>|</strong></td>
+        </tr>
+        <script type = "text/JavaScript">
+        function handleUpdateBeats(e){
+            if(e.keyCode === 13){
+                e.preventDefault();
+                updateBeats();
+                updateBlanks();
+            }
+        }
+
+        function handleUpdateBlanks(e){
+            if(e.keyCode === 13){
+                e.preventDefault();
+                updateBlanks();
+            }
+        }
+
+        function removeElementsByClass(className){
+            var elements = document.getElementsByClassName(className);
+            while(elements.length > 0){
+                elements[0].parentNode.removeChild(elements[0]);
+            }
+        }
+
+        function updateBeats() {
+            removeElementsByClass("beat");
+            removeElementsByClass("symbol");
+            removeElementsByClass("bar-end");
+            var newBeats = document.getElementById('beat-per-bar').value;
+            for (i=0; i<6; i++) {
+                var start = document.getElementsByClassName('string-start')[i]
+                for (x=0; x<newBeats; x++) {
+                    if (x==(newBeats-1)) {
+                        start.insertAdjacentHTML('afterend', '<td id="first-beat" class="first beat content" onclick="changeBeat(this)">-</td>')
+                    } else {
+                        start.insertAdjacentHTML('afterend', '<td id="beat" class="beat content" onclick="changeBeat(this)">-</td>');
+                    }
+                }
+                start.parentNode.insertAdjacentHTML('beforeend', '<td id="bar-end" class="bar-end content"><strong>|</strong></td>');
+            }
+        }
+
+        function changeBeat(a) {
+            if (a.innerHTML == "-") {
+                a.innerHTML = "X";
+            } else if (a.innerHTML == "X") {
+                a.innerHTML = 0;
+            } else if (a.innerHTML == 24) {
+                a.innerHTML = "-";
+            } else {
+                a.innerHTML++;
+            }
+        }
+
+        function changeBlank(a) {
+            console.log(a.classList)
+            var symbols = [" ","h","p","b","r","/","\\","v","t"]
+            var names = ["blank", "hammer-on", "pull-off", "bend", "release-bend", "slide-up", "slide-down", "vibrato", "tap"]
+            for (var i=0; i < names.length; i++) {
+                if (a.classList.contains(names[i]) & !a.classList.contains("ready")) {
+                    if (names[i] == "tap") {
+                        a.classList.remove(names[i]);
+                        a.classList.add("blank")
+                        a.innerHTML = " "
+                    } else {
+                        a.classList.remove(names[i]);
+                        a.classList.add(names[i+1]);
+                        a.innerHTML = symbols[i+1];
+                    }
+                    a.classList.add("ready");
+                }
+            }
+            a.classList.remove("ready");
+        }
+
+        function updateBlanks() {
+            removeElementsByClass("blank");
+            if (document.getElementById('blanks-per-beat') != null) {
+                var blanks = document.getElementById('blanks-per-beat').value;
+            } else {
+                var blanks = 0;
+            }
+            var beats = document.getElementsByClassName('beat')
+            if (beats) {
+                for (a=0; a<beats.length; a++) {
+                    if (beats.id == "first-beat") {
+                        for (x=0;x<blanks;x++){beats[a].insertAdjacentHTML('beforebegin', '<td id="first-blank" class="first blank content symbol" onclick="changeBlank(this)"> </td>')}
+                    } else {
+                        for (x=0;x<blanks;x++){beats[a].insertAdjacentHTML('beforebegin', '<td id="blank" class="blank content symbol" onclick="changeBlank(this)"> </td>')}
+                    }
+                }
+                var barEnds = document.getElementsByClassName('bar-end');
+                for (a=0; a<barEnds.length; a++) {
+                    for (x=0;x<blanks;x++){barEnds[a].insertAdjacentHTML('beforebegin', '<td id="last-blank" class="last blank content symbol" onclick="changeBlank(this)"> </td>')}
+                }
+            }
+        }
+
+        function addBar() {
+            var beats_per_bar = document.getElementById('beat-per-bar').value;
+            var blanks_per_beat = document.getElementById('blanks-per-beat').value;
+            var elements_per_bar = ((((+beats_per_bar * +blanks_per_beat) + +blanks_per_beat) + +beats_per_bar) + 1);
+            string = document.getElementsByClassName("string");
+            for (var x = 0; x < 6; x++) {
+                stringContent = [];
+                i = 4;
+                while (string[x].childNodes[i].id != "bar-end") {
+                    if (string[x].childNodes[i].nodeName != "#text" ) {stringContent.push(string[x].childNodes[i])};
+                    i++;
+                }
+                for (var z = 0; z < stringContent.length; z++) {
+                    string[x].insertAdjacentHTML('beforeend', stringContent[z].outerHTML)
+                }
+                string[x].insertAdjacentHTML('beforeend', '<td id="bar-end" class="bar-end content"><strong>|</strong></td>');
+                stringContent = [];
+            }
+        }
+    </script>
+    </table>
+</body>
+</html>
