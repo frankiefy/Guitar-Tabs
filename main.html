@@ -73,7 +73,8 @@
         }
 
         function removeElementsByClass(className){
-            var elements = document.getElementsByClassName(className);
+          var tabs = document.getElementById("tabs");
+          var elements = tabs.getElementsByClassName(className);
             while(elements.length > 0){
                 elements[0].parentNode.removeChild(elements[0]);
             }
@@ -83,9 +84,10 @@
             removeElementsByClass("beat");
             removeElementsByClass("symbol");
             removeElementsByClass("bar-end");
+            var tabs = document.getElementById("tabs");
             var newBeats = document.getElementById('beat-per-bar').value;
             for (i=0; i<6; i++) {
-                var start = document.getElementsByClassName('string-start')[i]
+                var start = tabs.getElementsByClassName('string-start')[i]
                 for (x=0; x<newBeats; x++) {
                     if (x==(newBeats-1)) {
                         start.insertAdjacentHTML('afterend', '<td id="first-beat" class="first beat content" onclick="changeBeat(this)">-</td>')
@@ -137,7 +139,8 @@
             } else {
                 var blanks = 0;
             }
-            var beats = document.getElementsByClassName('beat')
+            var tabs = document.getElementById("tabs");
+            var beats = tabs.getElementsByClassName('beat')
             if (beats) {
                 for (a=0; a<beats.length; a++) {
                     if (beats.id == "first-beat") {
@@ -146,7 +149,8 @@
                         for (x=0;x<blanks;x++){beats[a].insertAdjacentHTML('beforebegin', '<td id="blank" class="blank content symbol" onclick="changeBlank(this)"> </td>')}
                     }
                 }
-                var barEnds = document.getElementsByClassName('bar-end');
+                var tabs = document.getElementById("tabs");
+                var barEnds = tabs.getElementsByClassName('bar-end');
                 for (a=0; a<barEnds.length; a++) {
                     for (x=0;x<blanks;x++){barEnds[a].insertAdjacentHTML('beforebegin', '<td id="last-blank" class="last blank content symbol" onclick="changeBlank(this)"> </td>')}
                 }
