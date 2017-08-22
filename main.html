@@ -11,35 +11,45 @@
         <label>How much space between each beat?</label>
         <input type="text" id="blanks-per-beat" onkeypress="handleUpdateBlanks(event)"><br>
         <input value="Update (and reset)" type="button" onClick="updateBeats(); updateBlanks();"><input value="Add Bar" type="button" onClick="addBar()" ><br>
+        <input value="Add to final tabs (and reset)" type="button" onClick="addToTable();"><br>
         <label>Click a beat to increase fret (currently resets at 24)</label><br>
         <label>Click a blank to insert a symbol</label>
     </form>
-    <table>
-        <tr id="E-string" class="string e">
-            <th>E</th>
-            <td class="string-start" id="E-start"><strong>|</strong></td>
-        </tr>
-        <tr id="A-string" class="string a">
-            <th>A</th>
-            <td class="string-start" id="A-start"><strong>|</strong></td>
-        </tr>
-        <tr id="D-string" class="string d">
-            <th>D</th>
-            <td class="string-start" id="D-start"><strong>|</strong></td>
-        </tr>
-        <tr id="G-string" class="string g">
-            <th>G</th>
-            <td class="string-start" id="G-start"><strong>|</strong></td>
+    <table id="tabs">
+        <tr id="little-E-string" class="string littlee">
+            <th>e</th>
+            <td class="string-start" id="little-e-start"><strong>|</strong></td>
         </tr>
         <tr id="B-string" class="string b">
             <th>B</th>
             <td class="string-start" id="B-start"><strong>|</strong></td>
         </tr>
-        <tr id="little-E-string" class="string littlee">
-            <th>e</th>
-            <td class="string-start" id="little-e-start"><strong>|</strong></td>
+        <tr id="G-string" class="string g">
+            <th>G</th>
+            <td class="string-start" id="G-start"><strong>|</strong></td>
         </tr>
-        <script type = "text/JavaScript">
+        <tr id="D-string" class="string d">
+            <th>D</th>
+            <td class="string-start" id="D-start"><strong>|</strong></td>
+        </tr>
+        <tr id="A-string" class="string a">
+            <th>A</th>
+            <td class="string-start" id="A-start"><strong>|</strong></td>
+        </tr>
+        <tr id="E-string" class="string e">
+            <th>E</th>
+            <td class="string-start" id="E-start"><strong>|</strong></td>
+        </tr>
+    </table>
+    <br>
+
+    <table id="final-tabs">
+
+    </table>
+
+
+
+    <script type = "text/JavaScript">
         function handleUpdateBeats(e){
             if(e.keyCode === 13){
                 e.preventDefault();
@@ -53,6 +63,13 @@
                 e.preventDefault();
                 updateBlanks();
             }
+        }
+
+        function addToTable(){
+            currentTable = document.getElementById("tabs");
+            finalTabs = document.getElementById("final-tabs");
+            newTable = currentTable.cloneNode();
+            finalTabs.innerHTML += currentTable.innerHTML;
         }
 
         function removeElementsByClass(className){
@@ -156,6 +173,10 @@
             }
         }
     </script>
-    </table>
 </body>
+    <style>
+        td, th {
+            margin: 10px;
+        }
+    </style>
 </html>
