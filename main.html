@@ -42,6 +42,7 @@
         </tr>
     </table>
     <br>
+    <br>
 
     <table id="final-tabs">
 
@@ -70,6 +71,9 @@
             finalTabs = document.getElementById("final-tabs");
             newTable = currentTable.cloneNode();
             finalTabs.innerHTML += currentTable.innerHTML;
+            finalTabs.innerHTML += "<br>";
+            updateBeats();
+            updateBlanks();
         }
 
         function removeElementsByClass(className){
